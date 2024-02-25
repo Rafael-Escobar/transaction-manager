@@ -5,14 +5,9 @@ services:
     image: postgres:15.4-alpine
     restart: always
     environment:
-      POSTGRES_DB: transaction-manager-dev
+      POSTGRES_DB: transaction-manager-db-dev
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     command: ["postgres", "-c", "log_statement=all"]
     ports:
       - "5432:5432/tcp"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 1s
-      timeout: 10s
-      retries: 10
