@@ -23,6 +23,15 @@ func NewAccountHandler(
 	}
 }
 
+// CreateAccount
+// @Summary Create an account
+// @Description	Endpoint for creating an account
+// @Tags github.com/rafael-escobar/transaction-manager/
+// @Produce json
+// @Success 200
+// @Failure	400	{object}	map[string]string
+// @Failure	500	{object}	map[string]string
+// @Router /v1/accounts [post]
 func (a *Account) CreateAccountHandler(ctx *gin.Context) {
 	account := domain.Account{}
 	err, accountID := a.createAccount.Run(ctx, account)
@@ -33,6 +42,15 @@ func (a *Account) CreateAccountHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, a.mapCreateAccount(accountID))
 }
 
+// GetAccount
+// @Summary Get an account
+// @Description	Endpoint for getting an account
+// @Tags github.com/rafael-escobar/transaction-manager/
+// @Produce json
+// @Success 200
+// @Failure	400	{object}	map[string]string
+// @Failure	500	{object}	map[string]string
+// @Router /v1/accounts/{id} [Get]
 func (a *Account) GetAccountHandler(ctx *gin.Context) {
 	accountID := 0
 	err, account := a.getAccount.Run(ctx, accountID)
