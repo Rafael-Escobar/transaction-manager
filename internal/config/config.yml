@@ -1,0 +1,33 @@
+
+default: &default
+  APP_NAME: transaction-manager
+  LOG_LEVEL: "info"
+  PORT: 8080
+  DB_MAX_IDLE_CONNS: 1
+  DB_MAX_OPEN_CONNS: 3
+  DB_MAX_LIFE_TIME: 1m
+  DB_MAX_IDLE_TIME: 5m
+  CORS_ALLOW_HEADERS: ['Authorization']
+  CORS_ALLOW_CREDENTIALS: false
+
+development:
+  <<: *default
+  DB_HOST: localhost
+  DB_PORT: 5432
+  DB_NAME: transaction-manager-dev
+  DB_USER: user
+  DB_PASSWORD: password
+
+stg:
+  <<: [*default]
+  CORS_ALLOW_ORIGINS: ['*']
+  TRUE_APPLICATION_URL: "https://stg.transaction-manager.com.br"
+
+prd:
+  <<: [*default]
+  CORS_ALLOW_ORIGINS: ['https://transaction-manager.com.br']
+  TRUE_APPLICATION_URL: "https://transaction-manager.com.br"
+
+
+test:
+  <<: *default
