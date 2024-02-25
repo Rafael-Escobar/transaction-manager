@@ -21,3 +21,9 @@
 go.work
 
 .vscode/
+
+# ignore env files
+.env.local
+.env.development
+.env.production
+.env.staging
