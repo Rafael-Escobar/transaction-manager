@@ -20,6 +20,15 @@ func NewTransactionHandler(
 	}
 }
 
+// CreateTransaction
+// @Summary Create an transaction
+// @Description	Endpoint for creating an transaction
+// @Tags github.com/rafael-escobar/transaction-manager/
+// @Produce json
+// @Success 200
+// @Failure	400	{object}	map[string]string
+// @Failure	500	{object}	map[string]string
+// @Router /v1/transactions [post]
 func (t *Transaction) CreateTransactionHandler(ctx *gin.Context) {
 	transaction := domain.Transaction{}
 	err, transactionID := t.createTransaction.Run(ctx, transaction)
