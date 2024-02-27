@@ -4,12 +4,17 @@ import (
 	"context"
 
 	"github.com/transaction-manager/internal/domain"
+	"github.com/transaction-manager/internal/usecases/ports"
 )
 
-type CreateAccountUseCase struct{}
+type CreateAccountUseCase struct {
+	AccountRepository ports.AccountRepository
+}
 
-func NewCreateAccountUseCase() *CreateAccountUseCase {
-	return &CreateAccountUseCase{}
+func NewCreateAccountUseCase(accountRepository ports.AccountRepository) *CreateAccountUseCase {
+	return &CreateAccountUseCase{
+		AccountRepository: accountRepository,
+	}
 }
 
 func (*CreateAccountUseCase) Run(ctx context.Context, account domain.Account) (error, int) {

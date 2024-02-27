@@ -2,6 +2,7 @@ package deamon
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/transaction-manager/internal/clients/postgrees"
 	"github.com/transaction-manager/internal/config"
 	"github.com/transaction-manager/internal/controllers"
 	"github.com/transaction-manager/internal/routes"
@@ -16,9 +17,17 @@ var (
 
 func RunHttpServer(cfg *config.Config) {
 
-	createAccount := usecases.NewCreateAccountUseCase()
+	dbClient, err := postgrees.NewClient(cfg.RelationalDB.DSN(), cfg.RelationalDBConnection)
+	if err != nil {
+		panic(err)
+	}
+	// Repositories
+	accountRepository := postgrees.NewAccountRepository(dbClient)
+	transactionRepository := postgrees.NewTransactionRepository(dbClient)
+
+	createAccount := usecases.NewCreateAccountUseCase(accountRepository)
 	getAccount := usecases.NewGetAccountUseCase()
-	createTransaction := usecases.NewCreateTransactionUseCase()
+	createTransaction := usecases.NewCreateTransactionUseCase(transactionRepository, accountRepository)
 
 	appInfoController := controllers.NewAppInfoHandler(version, gitCommit, buildID)
 	accountController := controllers.NewAccountHandler(createAccount, getAccount)
