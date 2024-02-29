@@ -41,6 +41,9 @@ To update Swagger documentation, run:
 
 ### Other commands
 
+Run uni tests
+    ```make test```
+
 To check lint
     ```make lint```
 

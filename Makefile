@@ -80,3 +80,7 @@ lint:
 .PHONY: security-check
 security-check:
 	gosec ./...
+
+.PHONY: test
+test:
+	go test --short --race -failfast ./...
