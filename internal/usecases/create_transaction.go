@@ -51,6 +51,15 @@ func (c *CreateTransactionUseCase) Run(ctx context.Context, transaction *domain.
 		c.logger.Info("[CreateTransactionUseCase] operation type not found", zap.Any("operationTypeID", transaction.OperationTypeID))
 		return 0, domain.ErrIncorrectOperationType
 	}
+	c.logger.Info("[CreateTransactionUseCase] operation type found", zap.Any("operationType", operationType))
+
+	if !operationType.IsAmountValid(transaction.Amount) {
+		c.logger.Info("[CreateTransactionUseCase] invalid amount for operation type",
+			zap.Any("amount", transaction.Amount),
+			zap.Any("operationType", operationType),
+		)
+		return 0, domain.ErrIncorrectAmountForOperationType
+	}
 
 	transactionID, err := c.TransactionRepository.Create(transaction)
 	if err != nil {
