@@ -23,22 +23,22 @@ func NewCreateAccountUseCase(
 	}
 }
 
-func (c *CreateAccountUseCase) Run(ctx context.Context, account *domain.Account) (error, int64) {
+func (c *CreateAccountUseCase) Run(ctx context.Context, account *domain.Account) (int64, error) {
 	c.logger.Info("[CreateAccountUseCase] starting", zap.Any("account", account))
 	acc, err := c.AccountRepository.FindByDocumentNumber(account.DocumentNumber)
 	if err != nil {
 		c.logger.Error("[CreateAccountUseCase] error finding account by document number", zap.Error(err))
-		return err, 0
+		return 0, err
 	}
 	if acc != nil {
 		c.logger.Info("[CreateAccountUseCase] account already exists", zap.Any("account", account))
-		return domain.ErrAccountAlreadyExists, account.ID
+		return account.ID, domain.ErrAccountAlreadyExists
 	}
 	accountID, err := c.AccountRepository.Create(account)
 	if err != nil {
 		c.logger.Error("[CreateAccountUseCase] error creating account", zap.Error(err))
-		return err, 0
+		return 0, err
 	}
 	c.logger.Info("[CreateAccountUseCase] account created", zap.Any("accountID", accountID))
-	return nil, accountID
+	return accountID, nil
 }
