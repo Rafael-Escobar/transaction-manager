@@ -2,6 +2,9 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
+	_ "github.com/transaction-manager/docs"
 	"github.com/transaction-manager/internal/controllers"
 )
 
@@ -24,6 +27,7 @@ func (r *Router) RegisterRoutes(
 	// App Info
 	//	@BasePath	/app-info
 	v1.GET("/app-info", appInfo.Handler)
+	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.registerAccountRoutes(accountController)
 	r.registerTransactionRoutes(transactionController)
 }

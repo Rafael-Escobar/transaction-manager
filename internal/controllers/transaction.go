@@ -36,9 +36,9 @@ type CreateTransactionRequest struct {
 // @Description	Endpoint for creating an transaction
 // @Tags github.com/rafael-escobar/transaction-manager/
 // @Produce json
-// @Success 200
-// @Failure	400	{object}	map[string]string
-// @Failure	500	{object}	map[string]string
+// @Success 200 {object} CreateTransactionResponse
+// @Failure	400	{object}	ResponseError
+// @Failure	500	{object}	ResponseError
 // @Router /v1/transactions [post]
 func (t *Transaction) CreateTransactionHandler(ctx *gin.Context) {
 	t.logger.Info("[CreateTransactionHandler] starting")
@@ -47,25 +47,25 @@ func (t *Transaction) CreateTransactionHandler(ctx *gin.Context) {
 	var body CreateTransactionRequest
 	err := ctx.ShouldBindJSON(&body)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, "Invalid request body")
+		ctx.JSON(http.StatusBadRequest, t.mapResponseError("Invalid request body"))
 		return
 	}
 	transaction := t.mapCreateTransactionRequest(body)
 	transactionID, err := t.createTransaction.Run(ctx, transaction)
 	if errors.Is(err, domain.ErrInvalidAccount) {
-		ctx.JSON(http.StatusBadRequest, "Invalid account")
+		ctx.JSON(http.StatusBadRequest, t.mapResponseError("Invalid account"))
 		return
 	}
 	if errors.Is(err, domain.ErrInvalidOperationType) {
-		ctx.JSON(http.StatusBadRequest, "Invalid operation type")
+		ctx.JSON(http.StatusBadRequest, t.mapResponseError("Invalid operation type"))
 		return
 	}
 	if errors.Is(err, domain.ErrInvalidAmountForOperationType) {
-		ctx.JSON(http.StatusBadRequest, "Invalid amount for operation type")
+		ctx.JSON(http.StatusBadRequest, t.mapResponseError("Invalid amount for operation type"))
 		return
 	}
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, "Error creating transaction")
+		ctx.JSON(http.StatusInternalServerError, t.mapResponseError("Error creating transaction"))
 		return
 	}
 	ctx.JSON(http.StatusOK, t.mapCreateTransactionResponse(transactionID))
@@ -78,6 +78,12 @@ type CreateTransactionResponse struct {
 func (t *Transaction) mapCreateTransactionResponse(transactionID int64) CreateTransactionResponse {
 	return CreateTransactionResponse{
 		TransactionID: transactionID,
+	}
+}
+
+func (t *Transaction) mapResponseError(messageError string) ResponseError {
+	return ResponseError{
+		Message: messageError,
 	}
 }
 
