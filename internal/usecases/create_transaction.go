@@ -39,7 +39,7 @@ func (c *CreateTransactionUseCase) Run(ctx context.Context, transaction *domain.
 	}
 	if account == nil {
 		c.logger.Info("[CreateTransactionUseCase] account not found", zap.Any("accountID", transaction.AccountID))
-		return 0, domain.ErrIncorrectAccount
+		return 0, domain.ErrInvalidAccount
 	}
 
 	operationType, err := c.OperationTypeRepository.FindByID(transaction.OperationTypeID)
@@ -49,7 +49,7 @@ func (c *CreateTransactionUseCase) Run(ctx context.Context, transaction *domain.
 	}
 	if operationType == nil {
 		c.logger.Info("[CreateTransactionUseCase] operation type not found", zap.Any("operationTypeID", transaction.OperationTypeID))
-		return 0, domain.ErrIncorrectOperationType
+		return 0, domain.ErrInvalidOperationType
 	}
 	c.logger.Info("[CreateTransactionUseCase] operation type found", zap.Any("operationType", operationType))
 
@@ -58,7 +58,7 @@ func (c *CreateTransactionUseCase) Run(ctx context.Context, transaction *domain.
 			zap.Any("amount", transaction.Amount),
 			zap.Any("operationType", operationType),
 		)
-		return 0, domain.ErrIncorrectAmountForOperationType
+		return 0, domain.ErrInvalidAmountForOperationType
 	}
 
 	transactionID, err := c.TransactionRepository.Create(transaction)

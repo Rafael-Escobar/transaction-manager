@@ -6,9 +6,9 @@ import (
 )
 
 var (
-	ErrIncorrectOperationType          = errors.New("incorrect operation type")
-	ErrIncorrectAccount                = errors.New("incorrect account")
-	ErrIncorrectAmountForOperationType = errors.New("incorrect amount for operation type")
+	ErrInvalidOperationType          = errors.New("invalid operation type")
+	ErrInvalidAccount                = errors.New("invalid account")
+	ErrInvalidAmountForOperationType = errors.New("invalid amount for operation type")
 )
 
 type Transaction struct {
