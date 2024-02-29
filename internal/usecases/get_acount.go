@@ -23,17 +23,17 @@ func NewGetAccountUseCase(
 	}
 }
 
-func (g *GetAccountUseCase) Run(ctx context.Context, accountID int64) (error, *domain.Account) {
+func (g *GetAccountUseCase) Run(ctx context.Context, accountID int64) (*domain.Account, error) {
 	g.logger.Info("[GetAccountUseCase] starting", zap.Any("accountID", accountID))
 	account, err := g.AccountRepository.FindByID(accountID)
 	if err != nil {
 		g.logger.Error("[GetAccountUseCase] error finding account by ID", zap.Error(err))
-		return err, nil
+		return nil, err
 	}
 	if account == nil {
 		g.logger.Info("[GetAccountUseCase] account not found", zap.Any("accountID", accountID))
-		return domain.ErrAccountNotFound, nil
+		return nil, domain.ErrAccountNotFound
 	}
 	g.logger.Info("[GetAccountUseCase] account found", zap.Any("account", account))
-	return nil, account
+	return account, nil
 }
