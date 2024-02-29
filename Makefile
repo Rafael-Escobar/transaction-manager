@@ -51,3 +51,25 @@ dev/restart:
 .PHONY: dev/down
 dev/down:
 	make compose c="down"
+
+.PHONY: doc/update
+doc/update:
+	swag init
+
+.ONESHELL:
+.PHONY: install-tools
+install-tools: install-asdf-tools install-go-tools asdf-reshim
+
+.ONESHELL:
+.PHONY: install-asdf-tools
+install-asdf-tools:
+	@cat .tool-versions | awk '{print $$1}' | xargs -L 1 asdf plugin add; \
+	asdf install
+
+.ONESHELL:
+.PHONY: install-go-tools
+install-go-tools:
+	go install github.com/swaggo/swag/cmd/swag@latest; \
+	go install github.com/vektra/mockery/v2@v2.36.1; \
+	go install golang.org/x/tools/cmd/goimports@latest; \
+	go install github.com/spf13/cobra-cli@latest; \
