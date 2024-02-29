@@ -52,16 +52,16 @@ func (t *Transaction) CreateTransactionHandler(ctx *gin.Context) {
 	}
 	transaction := t.mapCreateTransactionRequest(body)
 	transactionID, err := t.createTransaction.Run(ctx, transaction)
-	if errors.Is(err, domain.ErrIncorrectAccount) {
-		ctx.JSON(http.StatusBadRequest, "Incorrect account")
+	if errors.Is(err, domain.ErrInvalidAccount) {
+		ctx.JSON(http.StatusBadRequest, "Invalid account")
 		return
 	}
-	if errors.Is(err, domain.ErrIncorrectOperationType) {
-		ctx.JSON(http.StatusBadRequest, "Incorrect operation type")
+	if errors.Is(err, domain.ErrInvalidOperationType) {
+		ctx.JSON(http.StatusBadRequest, "Invalid operation type")
 		return
 	}
-	if errors.Is(err, domain.ErrIncorrectAmountForOperationType) {
-		ctx.JSON(http.StatusBadRequest, "Incorrect amount for operation type")
+	if errors.Is(err, domain.ErrInvalidAmountForOperationType) {
+		ctx.JSON(http.StatusBadRequest, "Invalid amount for operation type")
 		return
 	}
 	if err != nil {
