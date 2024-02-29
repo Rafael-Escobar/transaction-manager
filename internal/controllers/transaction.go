@@ -60,6 +60,10 @@ func (t *Transaction) CreateTransactionHandler(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "Incorrect operation type")
 		return
 	}
+	if errors.Is(err, domain.ErrIncorrectAmountForOperationType) {
+		ctx.JSON(http.StatusBadRequest, "Incorrect amount for operation type")
+		return
+	}
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, "Error creating transaction")
 		return
