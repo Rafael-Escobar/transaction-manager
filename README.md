@@ -21,7 +21,7 @@
 ## How run the project
 
     1. Clone de repo
-    2. Install tools `make install-tools`
+    2. Install tools `make install-tools` if you already have golang installed just run `make install-go-tools`
     3. Raise de database `make dev/up`
     4. Run migrations `ENV=dev make migrate-up`
     5. Run locally the application `make run-local`
