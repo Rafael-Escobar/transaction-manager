@@ -53,7 +53,7 @@ func (a *Account) CreateAccountHandler(ctx *gin.Context) {
 		return
 	}
 	account := a.mapCreateAccountRequest(requestBody)
-	err, accountID := a.createAccount.Run(ctx, account)
+	accountID, err := a.createAccount.Run(ctx, account)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, "Error creating account")
 		return
@@ -79,7 +79,7 @@ func (a *Account) GetAccountHandler(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "Invalid account id")
 		return
 	}
-	err, account := a.getAccount.Run(ctx, accountID)
+	account, err := a.getAccount.Run(ctx, accountID)
 	if errors.Is(err, domain.ErrAccountNotFound) {
 		ctx.JSON(http.StatusNotFound, "Account not found")
 		return
