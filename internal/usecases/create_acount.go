@@ -32,7 +32,7 @@ func (c *CreateAccountUseCase) Run(ctx context.Context, account *domain.Account)
 	}
 	if acc != nil {
 		c.logger.Info("[CreateAccountUseCase] account already exists", zap.Any("account", account))
-		return account.ID, domain.ErrAccountAlreadyExists
+		return 0, domain.ErrAccountAlreadyExists
 	}
 	accountID, err := c.AccountRepository.Create(account)
 	if err != nil {
