@@ -5,7 +5,8 @@ import "github.com/transaction-manager/internal/controllers"
 func (r *Router) registerAccountRoutes(
 	controller *controllers.Account,
 ) {
-	group := r.Router.Group("/accounts")
+	v1 := r.Router.Group("/v1")
+	group := v1.Group("/accounts")
 
 	// Get Account
 	//	@BasePath	/accounts/{id}

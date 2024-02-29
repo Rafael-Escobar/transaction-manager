@@ -5,7 +5,8 @@ import "github.com/transaction-manager/internal/controllers"
 func (r *Router) registerTransactionRoutes(
 	controller *controllers.Transaction,
 ) {
-	group := r.Router.Group("/transactions")
+	v1 := r.Router.Group("/v1")
+	group := v1.Group("/transactions")
 
 	// Create Transaction
 	//	@BasePath	/transactions
