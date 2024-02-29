@@ -93,9 +93,9 @@ curl --location 'http://localhost:8080/transactions' \
 
 Future changes and improvements mapped:
 
-[] Add container for application on docker-compose file
-[] Improve test coverage
-[] Add [air](https://github.com/cosmtrek/air) live reload
-[] Create wrapper for package log
-[] Add container DI to the project
+- [ ] Add container for application on docker-compose file
+- [ ] Improve test coverage
+- [ ] Add [air](https://github.com/cosmtrek/air) live reload
+- [ ] Create wrapper for package log
+- [ ] Add container DI to the project
 
