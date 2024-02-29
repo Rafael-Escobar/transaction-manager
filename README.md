@@ -39,6 +39,20 @@ To update mocks, run the following command:
 To update Swagger documentation, run:
     ```make doc/update```
 
+### Other commands
+
+To check lint
+    ```make lint```
+
+To check security vulnerability
+    ```make security-check```
+
+To create migration
+    ```make migrate-create```
+
+To downgrade migration
+    ```make migrate-down```
+
 ## Testing on Development Environment
 
 ### Get App Info
