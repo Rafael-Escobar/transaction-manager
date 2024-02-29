@@ -6,16 +6,23 @@ import (
 	"runtime"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type AppInfo struct {
 	version   string
 	gitCommit string
 	buildID   string
+	logger    *zap.Logger
 }
 
-func NewAppInfoHandler(version, gitCommit, buildID string) *AppInfo {
-	return &AppInfo{}
+func NewAppInfoHandler(version, gitCommit, buildID string, logger *zap.Logger) *AppInfo {
+	return &AppInfo{
+		version:   version,
+		gitCommit: gitCommit,
+		buildID:   buildID,
+		logger:    logger,
+	}
 }
 
 func (a *AppInfo) Handler(ctx *gin.Context) {
