@@ -11,3 +11,19 @@ services:
     command: ["postgres", "-c", "log_statement=all"]
     ports:
       - "5432:5432/tcp"
+  service:
+    container_name: service
+    build:
+      context: ../../
+      dockerfile: ./infra/docker/Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - ../../.env.local
+    ports:
+      - "8080:8080"
+    restart: always
+    volumes:
+      - ../../:/app
+    networks:
+      - default
