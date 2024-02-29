@@ -13,13 +13,14 @@ import (
 var _ = Describe("CreateAccountUseCase", func() {
 
 	var (
-		useCase             *CreateAccountUseCase
-		accountRepository   *mocks.AccountRepository
-		logger              *zap.Logger
-		accountID           int64
-		validDocumentNumber string
-		// inValidDocumentNumber string
-		validAccount *domain.Account
+		useCase               *CreateAccountUseCase
+		accountRepository     *mocks.AccountRepository
+		logger                *zap.Logger
+		accountID             int64
+		validDocumentNumber   string
+		inValidDocumentNumber string
+		validAccount          *domain.Account
+		invalidAccount        *domain.Account
 	)
 	BeforeEach(func() {
 		accountRepository = &mocks.AccountRepository{}
@@ -27,9 +28,13 @@ var _ = Describe("CreateAccountUseCase", func() {
 		useCase = NewCreateAccountUseCase(accountRepository, logger)
 		accountID = int64(1)
 		validDocumentNumber = "76793495097"
+		inValidDocumentNumber = "76793495098"
 		validAccount = &domain.Account{
 			ID:             accountID,
 			DocumentNumber: validDocumentNumber,
+		}
+		invalidAccount = &domain.Account{
+			DocumentNumber: inValidDocumentNumber,
 		}
 	})
 	Context("CreateAccountUseCase", func() {
@@ -53,5 +58,15 @@ var _ = Describe("CreateAccountUseCase", func() {
 			})
 		})
 
+		When("The account ID are not related to a account, but the document number ir invalid", func() {
+			It("Returns a domain error ErrInvalidDocumentNumber", func() {
+				accountRepository.On("FindByDocumentNumber", inValidDocumentNumber).Return(nil, nil)
+				accountRepository.On("Create", validAccount).Return(accountID, nil)
+				accountID, err := useCase.Run(context.Background(), invalidAccount)
+				Expect(accountID).To(BeZero())
+				Expect(err).To(HaveOccurred())
+				Expect(err).To(Equal(domain.ErrInvalidDocumentNumber))
+			})
+		})
 	})
 })

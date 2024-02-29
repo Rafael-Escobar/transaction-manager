@@ -34,6 +34,10 @@ func (c *CreateAccountUseCase) Run(ctx context.Context, account *domain.Account)
 		c.logger.Info("[CreateAccountUseCase] account already exists", zap.Any("account", account))
 		return 0, domain.ErrAccountAlreadyExists
 	}
+	if !account.IsDocumentNumberValid() {
+		c.logger.Info("[CreateAccountUseCase] invalid document number", zap.Any("account", account))
+		return 0, domain.ErrInvalidDocumentNumber
+	}
 	accountID, err := c.AccountRepository.Create(account)
 	if err != nil {
 		c.logger.Error("[CreateAccountUseCase] error creating account", zap.Error(err))
