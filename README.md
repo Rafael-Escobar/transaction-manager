@@ -44,6 +44,9 @@ To update Swagger documentation, run:
 Run uni tests
     ```make test```
 
+To check test coverage
+    ```make test-coverage```
+
 To check lint
     ```make lint```
 

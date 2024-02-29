@@ -84,3 +84,7 @@ security-check:
 .PHONY: test
 test:
 	go test --short --race -failfast ./...
+
+.PHONY: test-coverage
+test:
+	go test -coverprofile=coverage.out ./... ;    go tool cover -html=coverage.out
