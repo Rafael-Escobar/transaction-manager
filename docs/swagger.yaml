@@ -1,0 +1,112 @@
+basePath: https://transaction-manager.com.br/v1
+definitions:
+  controllers.CreateAccountRequest:
+    properties:
+      document_number:
+        type: string
+    type: object
+  controllers.CreateAccountResponse:
+    properties:
+      account_id:
+        type: integer
+    type: object
+  controllers.CreateTransactionResponse:
+    properties:
+      transaction_id:
+        type: integer
+    type: object
+  controllers.GetAccountResponse:
+    properties:
+      account_id:
+        type: integer
+      document_number:
+        type: string
+    type: object
+  controllers.ResponseError:
+    properties:
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: rest api for manager transactions
+  title: transaction-manader API
+  version: "1.0"
+paths:
+  /v1/accounts:
+    post:
+      description: Endpoint for creating an account
+      parameters:
+      - description: Request body
+        in: body
+        name: requestBody
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreateAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.CreateAccountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ResponseError'
+      summary: Create an account
+      tags:
+      - github.com/rafael-escobar/transaction-manager/
+  /v1/accounts/{id}:
+    get:
+      description: Endpoint for getting an account
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.GetAccountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ResponseError'
+      summary: Get an account
+      tags:
+      - github.com/rafael-escobar/transaction-manager/
+  /v1/transactions:
+    post:
+      description: Endpoint for creating an transaction
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.CreateTransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.ResponseError'
+      summary: Create an transaction
+      tags:
+      - github.com/rafael-escobar/transaction-manager/
+swagger: "2.0"
