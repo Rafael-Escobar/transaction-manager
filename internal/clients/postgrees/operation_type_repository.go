@@ -20,7 +20,7 @@ func NewOperationTypeRepository(db *Client) *OperationTypeRepository {
 // FindByID finds an operation type by its id
 func (s *OperationTypeRepository) FindByID(id int) (*domain.OperationType, error) {
 	operationType := &domain.OperationType{}
-	err := s.db.Get(operationType, "SELECT id, description FROM operation_types WHERE id = $1", id)
+	err := s.db.Get(operationType, "SELECT id, description,is_debit FROM operation_types WHERE id = $1", id)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}
