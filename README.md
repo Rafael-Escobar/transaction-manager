@@ -1,4 +1,4 @@
-# transaction-manager
+# Transaction Manager
 
 The Transaction Manager is a microservice for managing accounts and transaction creation. This service provides the following methods:
 
