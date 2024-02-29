@@ -14,7 +14,7 @@ development:
   <<: *default
   DB_HOST: localhost
   DB_PORT: 5432
-  DB_NAME: transaction-manager-dev
+  DB_NAME: transaction-manager-db-dev
   DB_USER: user
   DB_PASSWORD: password
 

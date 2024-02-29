@@ -5,6 +5,7 @@ import (
 	"github.com/transaction-manager/internal/clients/postgrees"
 	"github.com/transaction-manager/internal/config"
 	"github.com/transaction-manager/internal/controllers"
+	"github.com/transaction-manager/internal/pkg/logger"
 	"github.com/transaction-manager/internal/routes"
 	"github.com/transaction-manager/internal/usecases"
 )
@@ -24,14 +25,23 @@ func RunHttpServer(cfg *config.Config) {
 	// Repositories
 	accountRepository := postgrees.NewAccountRepository(dbClient)
 	transactionRepository := postgrees.NewTransactionRepository(dbClient)
+	operationTypeRepository := postgrees.NewOperationTypeRepository(dbClient)
 
-	createAccount := usecases.NewCreateAccountUseCase(accountRepository)
-	getAccount := usecases.NewGetAccountUseCase()
-	createTransaction := usecases.NewCreateTransactionUseCase(transactionRepository, accountRepository)
+	logger, err := logger.NewLogger(cfg.AppName, logger.DefaultLogLevel(cfg.Environment.String()), cfg.Environment.String())
+	if err != nil {
+		panic(err)
+	}
+	createAccount := usecases.NewCreateAccountUseCase(accountRepository, logger)
+	getAccount := usecases.NewGetAccountUseCase(accountRepository, logger)
+	createTransaction := usecases.NewCreateTransactionUseCase(
+		transactionRepository,
+		accountRepository,
+		operationTypeRepository,
+		logger)
 
-	appInfoController := controllers.NewAppInfoHandler(version, gitCommit, buildID)
-	accountController := controllers.NewAccountHandler(createAccount, getAccount)
-	transactionController := controllers.NewTransactionHandler(createTransaction)
+	appInfoController := controllers.NewAppInfoHandler(version, gitCommit, buildID, logger)
+	accountController := controllers.NewAccountHandler(createAccount, getAccount, logger)
+	transactionController := controllers.NewTransactionHandler(createTransaction, logger)
 
 	// Creates a router without any middleware by default
 	r := gin.New()
