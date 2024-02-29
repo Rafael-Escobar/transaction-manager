@@ -54,6 +54,14 @@ func (a *Account) CreateAccountHandler(ctx *gin.Context) {
 	}
 	account := a.mapCreateAccountRequest(requestBody)
 	accountID, err := a.createAccount.Run(ctx, account)
+	if errors.Is(err, domain.ErrAccountAlreadyExists) {
+		ctx.JSON(http.StatusConflict, "Account already exists")
+		return
+	}
+	if errors.Is(err, domain.ErrInvalidDocumentNumber) {
+		ctx.JSON(http.StatusBadRequest, "Invalid document number")
+		return
+	}
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, "Error creating account")
 		return
