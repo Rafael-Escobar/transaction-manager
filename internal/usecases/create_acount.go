@@ -28,6 +28,10 @@ func NewCreateAccountUseCase(
 
 func (c *createAccountUseCase) Run(ctx context.Context, account *domain.Account) (int64, error) {
 	c.logger.Info("[createAccountUseCase] starting", zap.Any("account", account))
+	if !account.IsDocumentNumberValid() {
+		c.logger.Info("[createAccountUseCase] invalid document number", zap.Any("account", account))
+		return 0, domain.ErrInvalidDocumentNumber
+	}
 	acc, err := c.AccountRepository.FindByDocumentNumber(account.DocumentNumber)
 	if err != nil {
 		c.logger.Error("[createAccountUseCase] error finding account by document number", zap.Error(err))
@@ -36,10 +40,6 @@ func (c *createAccountUseCase) Run(ctx context.Context, account *domain.Account)
 	if acc != nil {
 		c.logger.Info("[createAccountUseCase] account already exists", zap.Any("account", account))
 		return 0, domain.ErrAccountAlreadyExists
-	}
-	if !account.IsDocumentNumberValid() {
-		c.logger.Info("[createAccountUseCase] invalid document number", zap.Any("account", account))
-		return 0, domain.ErrInvalidDocumentNumber
 	}
 	accountID, err := c.AccountRepository.Create(account)
 	if err != nil {
