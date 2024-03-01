@@ -21,7 +21,7 @@ func NewRouter(router *gin.Engine) *Router {
 func (r *Router) RegisterRoutes(
 	appInfo *controllers.AppInfo,
 	accountController *controllers.AccountHandler,
-	transactionController *controllers.Transaction,
+	transactionController *controllers.TransactionHandler,
 ) {
 	v1 := r.Router.Group("/v1")
 	// App Info
