@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"database/sql"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -13,7 +14,7 @@ import (
 var _ = Describe("CreateTransactionUseCase", func() {
 
 	var (
-		useCase                  *CreateTransactionUseCase
+		useCase                  *createTransactionUseCase
 		accountRepository        *mocks.AccountRepository
 		operationTypeRepository  *mocks.OperationTypeRepository
 		transactionRepository    *mocks.TransactionRepository
@@ -72,6 +73,19 @@ var _ = Describe("CreateTransactionUseCase", func() {
 				Expect(err).To(Equal(domain.ErrInvalidAccount))
 			})
 		})
+		When("The account ID is valid but fail on verify", func() {
+			It("Returns an error", func() {
+				accountRepository.On("FindByID", accountID).Return(nil, sql.ErrConnDone)
+				transactionRequested := &domain.Transaction{
+					AccountID:       accountID,
+					OperationTypeID: invalidOperationTypeID,
+					Amount:          100.0,
+				}
+				account, err := useCase.Run(context.Background(), transactionRequested)
+				Expect(account).ToNot(BeNil())
+				Expect(err).To(HaveOccurred())
+			})
+		})
 		When("The account ID is valid but the operation ID is not", func() {
 			It("Returns a domain error invalid operation type", func() {
 				accountRepository.On("FindByID", accountID).Return(validAccount, nil)
@@ -85,6 +99,21 @@ var _ = Describe("CreateTransactionUseCase", func() {
 				Expect(account).ToNot(BeNil())
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(Equal(domain.ErrInvalidOperationType))
+			})
+		})
+
+		When("The account are valid but fail on verify operation type", func() {
+			It("Returns an error", func() {
+				accountRepository.On("FindByID", accountID).Return(validAccount, nil)
+				transactionRequested := &domain.Transaction{
+					AccountID:       accountID,
+					OperationTypeID: debitOperationTypeID,
+					Amount:          100.0,
+				}
+				operationTypeRepository.On("FindByID", debitOperationTypeID).Return(nil, sql.ErrConnDone)
+				account, err := useCase.Run(context.Background(), transactionRequested)
+				Expect(account).ToNot(BeNil())
+				Expect(err).To(HaveOccurred())
 			})
 		})
 
@@ -133,6 +162,22 @@ var _ = Describe("CreateTransactionUseCase", func() {
 				Expect(account).ToNot(BeNil())
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(Equal(domain.ErrInvalidAmountForOperationType))
+			})
+		})
+
+		When("All the information is correct but fail on save", func() {
+			It("Returns no error and the transaction ID", func() {
+				accountRepository.On("FindByID", accountID).Return(validAccount, nil)
+				transactionRequested := &domain.Transaction{
+					AccountID:       accountID,
+					OperationTypeID: creditOperationTypeID,
+					Amount:          100.0,
+				}
+				operationTypeRepository.On("FindByID", creditOperationTypeID).Return(validCreditOperationType, nil)
+				transactionRepository.On("Create", transactionRequested).Return(int64(0), sql.ErrConnDone)
+				account, err := useCase.Run(context.Background(), transactionRequested)
+				Expect(account).To(BeZero())
+				Expect(err).To(HaveOccurred())
 			})
 		})
 

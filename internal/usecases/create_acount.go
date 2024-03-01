@@ -8,7 +8,10 @@ import (
 	"go.uber.org/zap"
 )
 
-type CreateAccountUseCase struct {
+type CreateAccountUseCase interface {
+	Run(ctx context.Context, account *domain.Account) (int64, error)
+}
+type createAccountUseCase struct {
 	AccountRepository ports.AccountRepository
 	logger            *zap.Logger
 }
@@ -16,33 +19,33 @@ type CreateAccountUseCase struct {
 func NewCreateAccountUseCase(
 	accountRepository ports.AccountRepository,
 	logger *zap.Logger,
-) *CreateAccountUseCase {
-	return &CreateAccountUseCase{
+) *createAccountUseCase {
+	return &createAccountUseCase{
 		AccountRepository: accountRepository,
 		logger:            logger,
 	}
 }
 
-func (c *CreateAccountUseCase) Run(ctx context.Context, account *domain.Account) (int64, error) {
-	c.logger.Info("[CreateAccountUseCase] starting", zap.Any("account", account))
+func (c *createAccountUseCase) Run(ctx context.Context, account *domain.Account) (int64, error) {
+	c.logger.Info("[createAccountUseCase] starting", zap.Any("account", account))
+	if !account.IsDocumentNumberValid() {
+		c.logger.Info("[createAccountUseCase] invalid document number", zap.Any("account", account))
+		return 0, domain.ErrInvalidDocumentNumber
+	}
 	acc, err := c.AccountRepository.FindByDocumentNumber(account.DocumentNumber)
 	if err != nil {
-		c.logger.Error("[CreateAccountUseCase] error finding account by document number", zap.Error(err))
+		c.logger.Error("[createAccountUseCase] error finding account by document number", zap.Error(err))
 		return 0, err
 	}
 	if acc != nil {
-		c.logger.Info("[CreateAccountUseCase] account already exists", zap.Any("account", account))
+		c.logger.Info("[createAccountUseCase] account already exists", zap.Any("account", account))
 		return 0, domain.ErrAccountAlreadyExists
-	}
-	if !account.IsDocumentNumberValid() {
-		c.logger.Info("[CreateAccountUseCase] invalid document number", zap.Any("account", account))
-		return 0, domain.ErrInvalidDocumentNumber
 	}
 	accountID, err := c.AccountRepository.Create(account)
 	if err != nil {
-		c.logger.Error("[CreateAccountUseCase] error creating account", zap.Error(err))
+		c.logger.Error("[createAccountUseCase] error creating account", zap.Error(err))
 		return 0, err
 	}
-	c.logger.Info("[CreateAccountUseCase] account created", zap.Any("accountID", accountID))
+	c.logger.Info("[createAccountUseCase] account created", zap.Any("accountID", accountID))
 	return accountID, nil
 }

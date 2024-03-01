@@ -8,7 +8,11 @@ import (
 	"go.uber.org/zap"
 )
 
-type CreateTransactionUseCase struct {
+type CreateTransactionUseCase interface {
+	Run(ctx context.Context, transaction *domain.Transaction) (int64, error)
+}
+
+type createTransactionUseCase struct {
 	TransactionRepository   ports.TransactionRepository
 	AccountRepository       ports.AccountRepository
 	OperationTypeRepository ports.OperationTypeRepository
@@ -20,8 +24,8 @@ func NewCreateTransactionUseCase(
 	accountRepository ports.AccountRepository,
 	operationTypeRepository ports.OperationTypeRepository,
 	logger *zap.Logger,
-) *CreateTransactionUseCase {
-	return &CreateTransactionUseCase{
+) *createTransactionUseCase {
+	return &createTransactionUseCase{
 		TransactionRepository:   transactionRepository,
 		AccountRepository:       accountRepository,
 		OperationTypeRepository: operationTypeRepository,
@@ -29,32 +33,32 @@ func NewCreateTransactionUseCase(
 	}
 }
 
-func (c *CreateTransactionUseCase) Run(ctx context.Context, transaction *domain.Transaction) (int64, error) {
-	c.logger.Info("[CreateTransactionUseCase] starting", zap.Any("transaction", transaction))
+func (c *createTransactionUseCase) Run(ctx context.Context, transaction *domain.Transaction) (int64, error) {
+	c.logger.Info("[createTransactionUseCase] starting", zap.Any("transaction", transaction))
 
 	account, err := c.AccountRepository.FindByID(transaction.AccountID)
 	if err != nil {
-		c.logger.Error("[CreateTransactionUseCase] error finding account by ID", zap.Error(err))
+		c.logger.Error("[createTransactionUseCase] error finding account by ID", zap.Error(err))
 		return 0, err
 	}
 	if account == nil {
-		c.logger.Info("[CreateTransactionUseCase] account not found", zap.Any("accountID", transaction.AccountID))
+		c.logger.Info("[createTransactionUseCase] account not found", zap.Any("accountID", transaction.AccountID))
 		return 0, domain.ErrInvalidAccount
 	}
 
 	operationType, err := c.OperationTypeRepository.FindByID(transaction.OperationTypeID)
 	if err != nil {
-		c.logger.Error("[CreateTransactionUseCase] error finding operation type by ID", zap.Error(err))
+		c.logger.Error("[createTransactionUseCase] error finding operation type by ID", zap.Error(err))
 		return 0, err
 	}
 	if operationType == nil {
-		c.logger.Info("[CreateTransactionUseCase] operation type not found", zap.Any("operationTypeID", transaction.OperationTypeID))
+		c.logger.Info("[createTransactionUseCase] operation type not found", zap.Any("operationTypeID", transaction.OperationTypeID))
 		return 0, domain.ErrInvalidOperationType
 	}
-	c.logger.Info("[CreateTransactionUseCase] operation type found", zap.Any("operationType", operationType))
+	c.logger.Info("[createTransactionUseCase] operation type found", zap.Any("operationType", operationType))
 
 	if !operationType.IsAmountValid(transaction.Amount) {
-		c.logger.Info("[CreateTransactionUseCase] invalid amount for operation type",
+		c.logger.Info("[createTransactionUseCase] invalid amount for operation type",
 			zap.Any("amount", transaction.Amount),
 			zap.Any("operationType", operationType),
 		)
@@ -63,9 +67,9 @@ func (c *CreateTransactionUseCase) Run(ctx context.Context, transaction *domain.
 
 	transactionID, err := c.TransactionRepository.Create(transaction)
 	if err != nil {
-		c.logger.Error("[CreateTransactionUseCase] error creating transaction", zap.Error(err))
+		c.logger.Error("[createTransactionUseCase] error creating transaction", zap.Error(err))
 		return 0, err
 	}
-	c.logger.Info("[CreateTransactionUseCase] transaction created", zap.Any("transactionID", transactionID))
+	c.logger.Info("[createTransactionUseCase] transaction created", zap.Any("transactionID", transactionID))
 	return transactionID, nil
 }
