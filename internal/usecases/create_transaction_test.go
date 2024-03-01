@@ -14,7 +14,7 @@ import (
 var _ = Describe("CreateTransactionUseCase", func() {
 
 	var (
-		useCase                  *CreateTransactionUseCase
+		useCase                  *createTransactionUseCase
 		accountRepository        *mocks.AccountRepository
 		operationTypeRepository  *mocks.OperationTypeRepository
 		transactionRepository    *mocks.TransactionRepository
