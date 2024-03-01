@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 
@@ -173,9 +172,11 @@ var _ = Describe("TransactionHandler", func() {
 
 		Context("when the account informed is invalid", func() {
 			It("should return status 400", func() {
-				accountRepository.On("FindByID", accountID).Return(nil, nil)
+				accountRepository.On("FindByID", invalidAccountID).Return(nil, nil)
 				operationTypeRepository.On("FindByID", debitOperationTypeID).Return(nil, nil)
-				reqBody, _ := json.Marshal(validDebitTransactionRequest)
+				invalidRequest := validDebitTransactionRequest
+				invalidRequest.AccountID = invalidAccountID
+				reqBody, _ := json.Marshal(invalidRequest)
 
 				req, _ := http.NewRequest("POST", "/v1/transactions", bytes.NewBuffer(reqBody))
 				req.Header.Set("Content-Type", "application/json")
@@ -206,8 +207,10 @@ var _ = Describe("TransactionHandler", func() {
 		Context("when the operation type informed is invalid", func() {
 			It("should return status 400", func() {
 				accountRepository.On("FindByID", accountID).Return(validAccount, nil)
-				operationTypeRepository.On("FindByID", debitOperationTypeID).Return(nil, nil)
-				reqBody, _ := json.Marshal(validDebitTransactionRequest)
+				operationTypeRepository.On("FindByID", invalidOperationTypeID).Return(nil, nil)
+				invalidRequest := validDebitTransactionRequest
+				invalidRequest.OperationTypeID = invalidOperationTypeID
+				reqBody, _ := json.Marshal(invalidRequest)
 
 				req, _ := http.NewRequest("POST", "/v1/transactions", bytes.NewBuffer(reqBody))
 				req.Header.Set("Content-Type", "application/json")
@@ -216,19 +219,6 @@ var _ = Describe("TransactionHandler", func() {
 				router.ServeHTTP(resp, req)
 
 				Expect(resp.Code).To(Equal(http.StatusBadRequest))
-			})
-		})
-		Context("when an error occurs during transaction creation", func() {
-			It("should return status 500", func() {
-				fmt.Println(validDebitTransactionRequest)
-				fmt.Println(accountID)
-				fmt.Println(invalidAccountID)
-				fmt.Println(invalidOperationTypeID)
-				fmt.Println(debitOperationTypeID)
-				fmt.Println(creditOperationTypeID)
-				fmt.Println(validAccount)
-				fmt.Println(validCreditOperationType)
-				fmt.Println(validDebitOperationType)
 			})
 		})
 	})
