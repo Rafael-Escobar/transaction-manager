@@ -54,7 +54,7 @@ func (a *AccountHandler) CreateAccountHandler(ctx *gin.Context) {
 		return
 	}
 	account := a.mapCreateAccountRequest(requestBody)
-	accountID, err := a.createAccount.Run(ctx, account)
+	accountID, err := a.createAccount.Run(ctx.Request.Context(), account)
 	if errors.Is(err, domain.ErrAccountAlreadyExists) {
 		ctx.JSON(http.StatusConflict, a.mapResponseError("Account already exists"))
 		return
@@ -89,7 +89,7 @@ func (a *AccountHandler) GetAccountHandler(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, a.mapResponseError("Invalid account id"))
 		return
 	}
-	account, err := a.getAccount.Run(ctx, accountID)
+	account, err := a.getAccount.Run(ctx.Request.Context(), accountID)
 	if errors.Is(err, domain.ErrAccountNotFound) {
 		ctx.JSON(http.StatusNotFound, a.mapResponseError("Account not found"))
 		return
