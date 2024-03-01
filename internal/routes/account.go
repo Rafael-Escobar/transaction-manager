@@ -3,7 +3,7 @@ package routes
 import "github.com/transaction-manager/internal/controllers"
 
 func (r *Router) registerAccountRoutes(
-	controller *controllers.Account,
+	controller *controllers.AccountHandler,
 ) {
 	v1 := r.Router.Group("/v1")
 	group := v1.Group("/accounts")

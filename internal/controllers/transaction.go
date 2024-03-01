@@ -10,16 +10,16 @@ import (
 	"go.uber.org/zap"
 )
 
-type Transaction struct {
-	createTransaction *usecases.CreateTransactionUseCase
+type TransactionHandler struct {
+	createTransaction usecases.CreateTransactionUseCase
 	logger            *zap.Logger
 }
 
 func NewTransactionHandler(
-	createTransaction *usecases.CreateTransactionUseCase,
+	createTransaction usecases.CreateTransactionUseCase,
 	logger *zap.Logger,
-) *Transaction {
-	return &Transaction{
+) *TransactionHandler {
+	return &TransactionHandler{
 		createTransaction: createTransaction,
 		logger:            logger,
 	}
@@ -40,7 +40,7 @@ type CreateTransactionRequest struct {
 // @Failure	400	{object}	ResponseError
 // @Failure	500	{object}	ResponseError
 // @Router /v1/transactions [post]
-func (t *Transaction) CreateTransactionHandler(ctx *gin.Context) {
+func (t *TransactionHandler) CreateTransactionHandler(ctx *gin.Context) {
 	t.logger.Info("[CreateTransactionHandler] starting")
 	defer t.logger.Info("[CreateTransactionHandler] ending")
 
@@ -75,19 +75,19 @@ type CreateTransactionResponse struct {
 	TransactionID int64 `json:"transaction_id"`
 }
 
-func (t *Transaction) mapCreateTransactionResponse(transactionID int64) CreateTransactionResponse {
+func (t *TransactionHandler) mapCreateTransactionResponse(transactionID int64) CreateTransactionResponse {
 	return CreateTransactionResponse{
 		TransactionID: transactionID,
 	}
 }
 
-func (t *Transaction) mapResponseError(messageError string) ResponseError {
+func (t *TransactionHandler) mapResponseError(messageError string) ResponseError {
 	return ResponseError{
 		Message: messageError,
 	}
 }
 
-func (t *Transaction) mapCreateTransactionRequest(body CreateTransactionRequest) *domain.Transaction {
+func (t *TransactionHandler) mapCreateTransactionRequest(body CreateTransactionRequest) *domain.Transaction {
 	return &domain.Transaction{
 		AccountID:       body.AccountID,
 		Amount:          body.Amount,

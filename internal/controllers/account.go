@@ -11,18 +11,18 @@ import (
 	"go.uber.org/zap"
 )
 
-type Account struct {
-	createAccount *usecases.CreateAccountUseCase
-	getAccount    *usecases.GetAccountUseCase
+type AccountHandler struct {
+	createAccount usecases.CreateAccountUseCase
+	getAccount    usecases.GetAccountUseCase
 	logger        *zap.Logger
 }
 
 func NewAccountHandler(
-	createAccount *usecases.CreateAccountUseCase,
-	getAccount *usecases.GetAccountUseCase,
+	createAccount usecases.CreateAccountUseCase,
+	getAccount usecases.GetAccountUseCase,
 	logger *zap.Logger,
-) *Account {
-	return &Account{
+) *AccountHandler {
+	return &AccountHandler{
 		createAccount: createAccount,
 		getAccount:    getAccount,
 		logger:        logger,
@@ -43,7 +43,7 @@ type CreateAccountRequest struct {
 // @Failure	400	{object}	ResponseError
 // @Failure	500	{object}	ResponseError
 // @Router /v1/accounts [post]
-func (a *Account) CreateAccountHandler(ctx *gin.Context) {
+func (a *AccountHandler) CreateAccountHandler(ctx *gin.Context) {
 	a.logger.Info("[CreateAccountHandler] starting")
 	defer a.logger.Info("[CreateAccountHandler] ending")
 
@@ -80,7 +80,7 @@ func (a *Account) CreateAccountHandler(ctx *gin.Context) {
 // @Failure	400	{object}	ResponseError
 // @Failure	500	{object}	ResponseError
 // @Router /v1/accounts/{id} [Get]
-func (a *Account) GetAccountHandler(ctx *gin.Context) {
+func (a *AccountHandler) GetAccountHandler(ctx *gin.Context) {
 	a.logger.Info("[GetAccountHandler] starting")
 	defer a.logger.Info("[GetAccountHandler] ending")
 	pathParam := ctx.Param("id")
@@ -113,26 +113,26 @@ type ResponseError struct {
 	Message string `json:"message"`
 }
 
-func (a *Account) mapResponseError(messageError string) ResponseError {
+func (a *AccountHandler) mapResponseError(messageError string) ResponseError {
 	return ResponseError{
 		Message: messageError,
 	}
 }
 
-func (a *Account) mapCreateAccountResponse(accountID int64) CreateAccountResponse {
+func (a *AccountHandler) mapCreateAccountResponse(accountID int64) CreateAccountResponse {
 	return CreateAccountResponse{
 		AccountID: accountID,
 	}
 }
 
-func (a *Account) mapGetAccountResponse(account *domain.Account) GetAccountResponse {
+func (a *AccountHandler) mapGetAccountResponse(account *domain.Account) GetAccountResponse {
 	return GetAccountResponse{
 		AccountID:      account.ID,
 		DocumentNumber: account.DocumentNumber,
 	}
 }
 
-func (a *Account) mapCreateAccountRequest(requestBody CreateAccountRequest) *domain.Account {
+func (a *AccountHandler) mapCreateAccountRequest(requestBody CreateAccountRequest) *domain.Account {
 	return &domain.Account{
 		DocumentNumber: requestBody.DocumentNumber,
 	}
