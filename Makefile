@@ -6,6 +6,9 @@ MOCK_DST:=./tests/mocks
 MOCK_INTERFACES_SOURCES+=TransactionRepository
 MOCK_INTERFACES_SOURCES+=AccountRepository
 MOCK_INTERFACES_SOURCES+=OperationTypeRepository
+MOCK_INTERFACES_SOURCES+=CreateAccountUseCase
+MOCK_INTERFACES_SOURCES+=CreateTransactionUseCase
+MOCK_INTERFACES_SOURCES+=GetAccountUseCase
 
 EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
