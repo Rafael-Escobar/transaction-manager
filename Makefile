@@ -76,6 +76,7 @@ install-go-tools:
 	go install github.com/vektra/mockery/v2@v2.36.1; \
 	go install golang.org/x/tools/cmd/goimports@latest; \
 	go install github.com/spf13/cobra-cli@latest; \
+	
 .PHONY: lint
 lint:
 	golangci-lint run -v ./...
