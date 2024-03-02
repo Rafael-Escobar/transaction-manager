@@ -14,7 +14,7 @@ import (
 var _ = Describe("GetAccountUseCase", func() {
 
 	var (
-		useCase           *GetAccountUseCase
+		useCase           *getAccountUseCase
 		accountRepository *mocks.AccountRepository
 		logger            *zap.Logger
 	)

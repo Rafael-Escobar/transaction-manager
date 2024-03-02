@@ -41,6 +41,12 @@ To update Swagger documentation, run:
 
 ### Other commands
 
+Run uni tests
+    ```make test```
+
+To check test coverage
+    ```make test-coverage```
+
 To check lint
     ```make lint```
 
@@ -94,8 +100,7 @@ curl --location 'http://localhost:8080/transactions' \
 Future changes and improvements mapped:
 
 - [ ] Add container for application on docker-compose file
-- [ ] Improve test coverage
+- [x] Improve test coverage
 - [ ] Add [air](https://github.com/cosmtrek/air) live reload
 - [ ] Create wrapper for package log
 - [ ] Add container DI to the project
-

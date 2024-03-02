@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
-	"github.com/swaggo/gin-swagger"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "github.com/transaction-manager/docs"
 	"github.com/transaction-manager/internal/controllers"
 )
@@ -20,8 +20,8 @@ func NewRouter(router *gin.Engine) *Router {
 
 func (r *Router) RegisterRoutes(
 	appInfo *controllers.AppInfo,
-	accountController *controllers.Account,
-	transactionController *controllers.Transaction,
+	accountController *controllers.AccountHandler,
+	transactionController *controllers.TransactionHandler,
 ) {
 	v1 := r.Router.Group("/v1")
 	// App Info
